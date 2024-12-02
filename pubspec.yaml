@@ -1,0 +1,32 @@
+name: riddle
+description: "riddle paws"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  just_audio:
+  shared_preferences:
+  page_transition:
+  lottie:
+  vibration:
+  provider:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/audio/
+    - assets/images/
+    - assets/raw/
