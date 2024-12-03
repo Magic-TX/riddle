@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:riddle/audio_manager.dart';
+import 'package:riddle/screens/game.dart';
 import 'package:riddle/screens/help.dart';
 import 'package:riddle/screens/select_bg.dart';
 import 'package:riddle/screens/settings.dart';
@@ -51,12 +53,22 @@ class _HomeState extends State<Home> {
         (route) => false);
   }
 
+  void game() {
+    audioManager.playClickSound();
+    Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+            child: const Games(),
+            type: PageTransitionType.fade,
+            duration: const Duration(milliseconds: 1000)),
+        (route) => false);
+  }
+
   @override
   void initState() {
     super.initState();
     audioManager.init();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +128,23 @@ class _HomeState extends State<Home> {
                     child: Image.asset('assets/images/tutorial.png',
                         fit: BoxFit.cover),
                   ),
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                  GestureDetector(
+                    onTap: () {
+                      if (vibrationSettings.isVibrationEnabled) {
+                        Vibration.hasVibrator().then((hasVibrator) {
+                          if (hasVibrator == true) {
+                            Vibration.vibrate(duration: 50);
+                          }
+                        });
+                      }
+                      game();
+                    },
+                    child: Lottie.asset('assets/raw/bonus.json',
+                        fit: BoxFit.cover,
+                        frameRate: FrameRate.max,
+                        height: 80),
+                  )
                 ],
               ),
             ],

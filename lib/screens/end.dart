@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:provider/provider.dart';
 import 'package:riddle/audio_manager.dart';
 import 'package:riddle/screens/home.dart';
-import 'package:riddle/vibration_manager.dart';
-import 'package:vibration/vibration.dart';
 
-class Help extends StatefulWidget {
-  const Help({super.key});
+class End extends StatefulWidget {
+  const End({super.key});
 
   @override
-  State<Help> createState() => _HelpState();
+  State<End> createState() => _EndState();
 }
 
-class _HelpState extends State<Help> {
+class _EndState extends State<End> {
   final AudioManager audioManager = AudioManager();
 
   void home() {
@@ -22,14 +19,13 @@ class _HelpState extends State<Help> {
         context,
         PageTransition(
             child: const Home(),
-            type: PageTransitionType.bottomToTop,
-            duration: const Duration(milliseconds: 800)),
+            type: PageTransitionType.fade,
+            duration: const Duration(milliseconds: 1000)),
         (route) => false);
   }
 
   @override
   Widget build(BuildContext context) {
-    final vibrationSettings = Provider.of<VibrationSettings>(context);
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -51,31 +47,20 @@ class _HelpState extends State<Help> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Positioned(
-                    top: -20,
-                    left: 0,
-                    right: 0,
-                    child: Image.asset(
-                      'assets/images/infoTitle.png',
-                      fit: BoxFit.contain,
-                      height: 80,
-                      alignment: Alignment.topCenter,
-                    ),
-                  ),
-                   Center(
+                  Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                        const SizedBox(height: 50),
                         const Text(
-                          "You need to specify the letters one\nby one and guess the words.\nFor each correct word, you increase\nyour progress and get game points - paws, for which you can buy a hint",
-                          textAlign: TextAlign.center,
+                          "Attempts is over!",
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                              fontSize: 32,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.1),
                       ],
                     ),
                   ),
@@ -84,18 +69,9 @@ class _HelpState extends State<Help> {
                     left: 0,
                     right: 0,
                     child: GestureDetector(
-                      onTap: () {
-                        if (vibrationSettings.isVibrationEnabled) {
-                          Vibration.hasVibrator().then((hasVibrator) {
-                            if (hasVibrator == true) {
-                              Vibration.vibrate(duration: 50);
-                            }
-                          });
-                        }
-                        home();
-                      },
+                      onTap: home,
                       child: Image.asset(
-                        'assets/images/close.png',
+                        'assets/images/menu.png',
                         fit: BoxFit.contain,
                         alignment: Alignment.bottomCenter,
                         height: 50,
