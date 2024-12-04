@@ -15,6 +15,7 @@ dependencies:
   lottie:
   vibration:
   provider:
+  onesignal_flutter:
 
 dev_dependencies:
   flutter_test:
