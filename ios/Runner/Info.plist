@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Access to the microphone is not required</string>
+	<key>OneSignal_AppID</key>
+    <string>9cdbc227-67a1-4829-baa6-c04972da3978</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
