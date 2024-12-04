@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:riddle/audio_manager.dart';
 import 'package:riddle/screens/game.dart';
 import 'package:riddle/screens/help.dart';
+import 'package:riddle/screens/reward.dart';
 import 'package:riddle/screens/select_bg.dart';
 import 'package:riddle/screens/settings.dart';
 import 'package:riddle/vibration_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
 
 class Home extends StatefulWidget {
@@ -19,6 +21,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final AudioManager audioManager = AudioManager();
+  bool isActive = false;
 
   void settings() {
     audioManager.playClickSound();
@@ -64,10 +67,56 @@ class _HomeState extends State<Home> {
         (route) => false);
   }
 
+  void reward() {
+    audioManager.playClickSound();
+    Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+            child: const Reward(),
+            type: PageTransitionType.fade,
+            duration: const Duration(milliseconds: 1000)),
+        (route) => false);
+  }
+
+  Future<void> checkButtonStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? lastPressedTime = prefs.getInt('lastPressedTime');
+
+    if (lastPressedTime == null) {
+      setState(() {
+        isActive = true;
+      });
+    } else {
+      DateTime lastPressedDateTime =
+          DateTime.fromMillisecondsSinceEpoch(lastPressedTime);
+      DateTime now = DateTime.now();
+      if (now.difference(lastPressedDateTime).inHours >= 24) {
+        setState(() {
+          isActive = true;
+        });
+      } else {
+        setState(() {
+          isActive = false;
+        });
+      }
+    }
+  }
+
+  Future<void> dayReward() async {
+    if (!isActive) return;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(
+        'lastPressedTime', DateTime.now().millisecondsSinceEpoch);
+    setState(() {
+      isActive = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     audioManager.init();
+    checkButtonStatus();
   }
 
   @override
@@ -82,6 +131,44 @@ class _HomeState extends State<Home> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 40.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                        onTap: isActive
+                            ? () {
+                                if (vibrationSettings.isVibrationEnabled) {
+                                  Vibration.hasVibrator().then((hasVibrator) {
+                                    if (hasVibrator == true) {
+                                      Vibration.vibrate(duration: 50);
+                                    }
+                                  });
+                                }
+                                reward();
+                                dayReward();
+                              }
+                            : null,
+                        child: Opacity(
+                          opacity: isActive ? 1.0 : 0.7,
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                color: Colors.deepOrange,
+                                borderRadius: BorderRadius.circular(12.0),
+                                border: Border.all(
+                                    width: 2.0, color: Colors.brown)),
+                            child: const Center(
+                              child: Icon(Icons.add_business_outlined,
+                                  color: Colors.white, size: 32),
+                            ),
+                          ),
+                        )),
+                  ],
+                ),
+              ),
               GestureDetector(
                 onTap: () {
                   if (vibrationSettings.isVibrationEnabled) {

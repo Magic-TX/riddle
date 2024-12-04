@@ -16,6 +16,7 @@ dependencies:
   vibration:
   provider:
   onesignal_flutter:
+  scratcher:
 
 dev_dependencies:
   flutter_test:
