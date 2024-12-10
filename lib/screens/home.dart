@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:riddle/audio_manager.dart';
 import 'package:riddle/screens/game.dart';
 import 'package:riddle/screens/help.dart';
+import 'package:riddle/screens/news.dart';
 import 'package:riddle/screens/reward.dart';
 import 'package:riddle/screens/select_bg.dart';
 import 'package:riddle/screens/settings.dart';
@@ -22,6 +24,45 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final AudioManager audioManager = AudioManager();
   bool isActive = false;
+  Duration remainingTime = Duration.zero;
+
+  Future<void> updateRemainingTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? lastPressedTime = prefs.getInt('lastPressedTime');
+    if (lastPressedTime != null) {
+      DateTime lastPressedDateTime =
+          DateTime.fromMillisecondsSinceEpoch(lastPressedTime);
+      DateTime now = DateTime.now();
+      Duration difference =
+          lastPressedDateTime.add(const Duration(hours: 24)).difference(now);
+      if (difference.isNegative) {
+        setState(() {
+          remainingTime = Duration.zero;
+          isActive = true;
+        });
+      } else {
+        setState(() {
+          remainingTime = difference;
+          isActive = false;
+        });
+      }
+    } else {
+      setState(() {
+        remainingTime = Duration.zero;
+        isActive = true;
+      });
+    }
+  }
+
+  void startTimer() {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingTime == Duration.zero && isActive) {
+        timer.cancel();
+      } else {
+        updateRemainingTime();
+      }
+    });
+  }
 
   void settings() {
     audioManager.playClickSound();
@@ -65,6 +106,17 @@ class _HomeState extends State<Home> {
             type: PageTransitionType.fade,
             duration: const Duration(milliseconds: 1000)),
         (route) => false);
+  }
+
+  void news() {
+    audioManager.playClickSound();
+    Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+            child: const News(),
+            type: PageTransitionType.leftToRight,
+            duration: const Duration(milliseconds: 1000)),
+            (route) => false);
   }
 
   void reward() {
@@ -117,6 +169,8 @@ class _HomeState extends State<Home> {
     super.initState();
     audioManager.init();
     checkButtonStatus();
+    updateRemainingTime();
+    startTimer();
   }
 
   @override
@@ -132,26 +186,24 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 40.0),
+                padding: const EdgeInsets.only(right: 40.0, left: 40.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(
-                        onTap: isActive
-                            ? () {
-                                if (vibrationSettings.isVibrationEnabled) {
-                                  Vibration.hasVibrator().then((hasVibrator) {
-                                    if (hasVibrator == true) {
-                                      Vibration.vibrate(duration: 50);
-                                    }
-                                  });
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (vibrationSettings.isVibrationEnabled) {
+                              Vibration.hasVibrator().then((hasVibrator) {
+                                if (hasVibrator == true) {
+                                  Vibration.vibrate(duration: 50);
                                 }
-                                reward();
-                                dayReward();
-                              }
-                            : null,
-                        child: Opacity(
-                          opacity: isActive ? 1.0 : 0.7,
+                              });
+                            }
+                            news();
+                          },
                           child: Container(
                             width: 50,
                             height: 50,
@@ -161,11 +213,68 @@ class _HomeState extends State<Home> {
                                 border: Border.all(
                                     width: 2.0, color: Colors.brown)),
                             child: const Center(
-                              child: Icon(Icons.add_business_outlined,
+                              child: Icon(Icons.ad_units_sharp,
                                   color: Colors.white, size: 32),
                             ),
                           ),
-                        )),
+                        ),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02),
+                          const Text(
+                            'News',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                            onTap: isActive
+                                ? () {
+                                    if (vibrationSettings.isVibrationEnabled) {
+                                      Vibration.hasVibrator()
+                                          .then((hasVibrator) {
+                                        if (hasVibrator == true) {
+                                          Vibration.vibrate(duration: 50);
+                                        }
+                                      });
+                                    }
+                                    reward();
+                                    dayReward();
+                                  }
+                                : null,
+                            child: Opacity(
+                              opacity: isActive ? 1.0 : 0.7,
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: Colors.deepOrange,
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    border: Border.all(
+                                        width: 2.0, color: Colors.brown)),
+                                child: const Center(
+                                  child: Icon(Icons.add_business_outlined,
+                                      color: Colors.white, size: 32),
+                                ),
+                              ),
+                            )),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02),
+                        if (!isActive)
+                          Text(
+                            "${remainingTime.inHours.toString().padLeft(2, '0')}:${(remainingTime.inMinutes % 60).toString().padLeft(2, '0')}:${(remainingTime.inSeconds % 60).toString().padLeft(2, '0')}",
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                      ],
+                    ),
                   ],
                 ),
               ),
