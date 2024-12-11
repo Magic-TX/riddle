@@ -116,7 +116,7 @@ class _HomeState extends State<Home> {
             child: const News(),
             type: PageTransitionType.leftToRight,
             duration: const Duration(milliseconds: 1000)),
-            (route) => false);
+        (route) => false);
   }
 
   void reward() {
@@ -204,29 +204,11 @@ class _HomeState extends State<Home> {
                             }
                             news();
                           },
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                                color: Colors.deepOrange,
-                                borderRadius: BorderRadius.circular(12.0),
-                                border: Border.all(
-                                    width: 2.0, color: Colors.brown)),
-                            child: const Center(
-                              child: Icon(Icons.ad_units_sharp,
-                                  color: Colors.white, size: 32),
-                            ),
-                          ),
+                          child: Lottie.asset('assets/raw/new.json',
+                              fit: BoxFit.cover,
+                              frameRate: FrameRate.max,
+                              height: 80),
                         ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02),
-                          const Text(
-                            'News',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
                       ],
                     ),
                     Column(

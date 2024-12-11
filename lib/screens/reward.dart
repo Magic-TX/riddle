@@ -70,7 +70,8 @@ class _RewardState extends State<Reward> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 40.0, left: 40.0, top: 20.0),
+                padding:
+                    const EdgeInsets.only(right: 40.0, left: 40.0, top: 20.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -135,43 +136,47 @@ class _RewardState extends State<Reward> {
                   itemBuilder: (context, index) {
                     return revealed[index]
                         ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Center(
-                        child: Text(
-                          '+${rewards[index]}',
-                          style: const TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    )
-                        : Scratcher(
-                      brushSize: 50,
-                      threshold: 50,
-                      color: Colors.grey.shade300,
-                      onThreshold: () => _addCoins(rewards[index], index),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blueGrey,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'Reward',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
-                          ),
-                        ),
-                      ),
-                    );
+                            child: Center(
+                              child: Text(
+                                '+${rewards[index]}',
+                                style: const TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          )
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(16.0),
+                            child: Scratcher(
+                              brushSize: 50,
+                              threshold: 50,
+                              color: Colors.deepOrange.shade700,
+                              onThreshold: () =>
+                                  _addCoins(rewards[index], index),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.red.shade200,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    '?',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
                   },
                 ),
               ),
