@@ -1,0 +1,22 @@
+{
+  "flutter": {
+    "platforms": {
+      "ios": {
+        "default": {
+          "projectId": "tiger-riddle-paws",
+          "appId": "1:449908293049:ios:dca6901d3d4b14653c0a68",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "tiger-riddle-paws",
+          "configurations": {
+            "ios": "1:449908293049:ios:dca6901d3d4b14653c0a68"
+          }
+        }
+      }
+    }
+  }
+}

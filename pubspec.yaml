@@ -17,6 +17,9 @@ dependencies:
   provider:
   onesignal_flutter:
   scratcher:
+  firebase_core:
+  firebase_remote_config:
+  firebase_analytics:
 
 dev_dependencies:
   flutter_test:

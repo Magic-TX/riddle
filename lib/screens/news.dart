@@ -115,7 +115,24 @@ class _NewsState extends State<News> {
                                   color: Colors.white54,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20.0)),
-                          Text(' Updated Icon and Name, bug fixes',
+                          Text(' Updated Name, bug fixes',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0)),
+                        ],
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('1.3:',
+                              style: TextStyle(
+                                  color: Colors.white54,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20.0)),
+                          Text(' Add new words, bug fixes',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
